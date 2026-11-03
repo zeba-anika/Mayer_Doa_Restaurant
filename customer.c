@@ -176,11 +176,33 @@ void customerwrite(int total_price, int cart[], int z) {
 
 void foodorder(int z) {
     int item, count, cart[5] = {0}, total_price = 0;
-    printf("<-- Menu -->\n");
+    printf("\n <-- Menu -->\n\n");
     
-    for (int i = 0; i < 5; i++) {
-        printf("%d. %s - %d\n", i+1, Menu[i].item_name, Menu[i].item_price);
+    int invalid_food_no = 0, invalid_food_items[5] = {0};
+    char line[100] = {0};
+        
+    FILE *fptr;
+    fptr = fopen("foodstock.txt", "r");
+
+    int klm_counter = 0;
+    while (fgets(line, 100, fptr)) {
+        int food_item_no, food_status;
+        char food_name[20];
+        
+        if (sscanf(line, "%d %d %s", &food_item_no, &food_status, food_name)) {
+            if (food_status) {
+                printf("%d. %s - %d BDT\n", klm_counter+1, Menu[klm_counter].item_name, Menu[klm_counter].item_price);
+                printf("\n");
+            } 
+            else {
+                invalid_food_items[invalid_food_no] = food_item_no;
+                invalid_food_no++;
+            } 
+            klm_counter++;              
+        }
     }
+
+    fclose(fptr);
 
     printf("Type 0 to exit.\n");
     while (1) {
@@ -218,10 +240,16 @@ void foodorder(int z) {
 
         }
 
-        printf("How many %s? - ", Menu[item-1].item_name);
-        scanf("%d", &count);
+        if (item < 0 || item > 5 || invalid_food_items[0] == item ||  invalid_food_items[1] == item || invalid_food_items[2] == item || invalid_food_items[3] == item || invalid_food_items[4] == item) {
+            printf("Your given option is invalid\n");
+            count = 0;
+        }
+        else {
+            printf("How many %s? - ", Menu[item-1].item_name);
+            scanf("%d", &count);
+        }
 
-        if (item < 0 || item > 5 || count < 0) {
+        if (count < 0) {
             printf("Your given option is invalid\n");
         }
         else {
