@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+// Defining Colors
 #define COLOR_RESET       "\033[0m"
 #define COLOR_DEEP_BLUE   "\033[1;34m"
 #define COLOR_LIGHT_BLUE  "\033[1;36m"
@@ -22,7 +23,7 @@ int main() {
     }
 }
 
-// Function to update the diner's screen with the current orders
+// Update the diner's screen with the current orders
 void Update_AS() {
     system("cls");
     printf(COLOR_BRIGHT_WHITE"-----------------  Welcome to Diners Screen  ----------------\n"COLOR_RESET"\n\n\n");

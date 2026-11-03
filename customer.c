@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h>
 
+// Defining colors
 #define COLOR_RESET       "\033[0m"
 #define COLOR_DEEP_BLUE   "\033[1;34m"
 #define COLOR_LIGHT_BLUE  "\033[1;36m"
@@ -11,7 +12,7 @@
 
 // Global variables for the program
 int tablestatus[10] = {0};
-int order_id = 101;
+int order_id = 100;
 int cart[5] = {0};
 int total_price;
 int table_counter = 0;
@@ -33,7 +34,7 @@ void foodorder(int z);
 int main() {
     system("cls");
 
-    // Reads the last order ID from the last session to continue after the last order
+    // Records last orderID to keep going where we left off
     char line[100] = {0};
 
     FILE *fptr;
@@ -42,8 +43,6 @@ int main() {
     while (fgets(line, 100, fptr)) {
         sscanf(line, "%d", &order_id);
     }
-    if (order_id != 101)
-        order_id++;
 
     fclose(fptr);
 
@@ -53,7 +52,7 @@ int main() {
     }
 }
 
-// Function to display the table booking system and handle table reservations
+// Display the table booking and Handle reservations
 void table() {
     int n;
 
@@ -61,7 +60,7 @@ void table() {
         tablestatus[i] = 0;
     }
 
-    // Checks which table are free and which are booked before running the table booking system
+    // Checks table status before continuing
     char line[100];
 
     FILE *fptr;
@@ -95,7 +94,7 @@ void table() {
         current_table[i] = 0;
     }
 
-    // Displays which tables are free and which are booked
+    // Display table status
     printf(COLOR_BRIGHT_WHITE"-----------------  Table Booking System  ----------------\n"COLOR_RESET);
     
     int free_table_flag = 0;
@@ -107,8 +106,8 @@ void table() {
     }
 
 
-    printf("\n\n");
-    printf("_________________________________________________________\n\n\n");
+    printf("\n");
+    printf("_________________________________________________________\n\n");
     for (int i = 0; i < 10; i++) {
         if (tablestatus[i] == 1) {
             printf(" [  ------  ]   ");
@@ -133,7 +132,7 @@ void table() {
     }
     printf(COLOR_DEEP_BLUE"         [ ----- Payment Desk ----- ]"COLOR_RESET);
     printf("\n\n");
-    printf("_________________________________________________________\n\n\n");
+    printf("_________________________________________________________\n");
     
 
 
@@ -145,26 +144,30 @@ void table() {
     printf("\nEnter 0 to exit\n");
     table_counter = 0;
 
-    // Allows the user to book a table
+    // Book a table
     while (1) {
         printf("Which table would you like to book?-");
         scanf("%d", &n);
         if (n == 0) {
             break;
         }
-
-        for (int i = 0; i < 10; i++) {
-            if (tablestatus[n - 1] == 1) {
-                printf("This table is already reserved. Try another one.\n");
-                break;
-            }
+        else if(n < 0 || n > 10) {
+            printf("Invalid Option.\n");           
         }
+        else {
+            for (int i = 0; i < 10; i++) {
+                if (tablestatus[n - 1] == 1) {
+                    printf("This table is already reserved. Try another one.\n");
+                    break;
+                }
+            }
 
-        if (tablestatus[n - 1] == 0) {
-            current_table[table_counter] = n;
-            table_counter++;
-            tablestatus[n - 1] = 1;
-            printf("Table no %d has been reserved.\n\n", n);
+            if (tablestatus[n - 1] == 0) {
+                current_table[table_counter] = n;
+                table_counter++;
+                tablestatus[n - 1] = 1;
+                printf("Table no %d has been reserved.\n\n", n);
+            }
         }
     }
 
@@ -177,7 +180,7 @@ void table() {
     printf("\n");
 }
 
-// Function to write the full customer's order to the log
+// Write the full customer's order to the history log
 void customerwrite(int total_price, int cart[], int z) {
     FILE *fptr;
     fptr = fopen("foodorder.txt", "a");
@@ -197,7 +200,7 @@ void customerwrite(int total_price, int cart[], int z) {
         return;
     }
 
-    // Checks current date
+    // Check current date
     char day_name[10], month_name[10];
     int day_num;
     time_t now = time(NULL);
@@ -222,7 +225,7 @@ void customerwrite(int total_price, int cart[], int z) {
     fclose(fptr);
 }
 
-// Function to display the menu and handle food ordering
+// Show menu and food order
 void foodorder(int z) {
     int item, count, cart[5] = {0}, total_price = 0;
     printf("\n" COLOR_BRIGHT_WHITE"---------  Food Menu  ---------"COLOR_RESET"\n\n");
@@ -230,7 +233,7 @@ void foodorder(int z) {
     int invalid_food_no = 0, invalid_food_items[5] = {0};
     char line[100] = {0};
 
-    // Checks whether the food items are available or not before displaying the menu
+    // Food item availability check
     FILE *fptr;
     fptr = fopen("foodstock.txt", "r");
 
@@ -255,7 +258,7 @@ void foodorder(int z) {
     fclose(fptr);
     printf("Type 0 to exit.\n");
 
-    // Allows the user to order food items and handles invalid inputs
+    // Order food items
     while (1) {
         printf("\nWhich item do you want?- ");
         scanf("%d", &item);
@@ -279,10 +282,9 @@ void foodorder(int z) {
             }
 
             if (real_status) {
-                printf("\nYour Order ID: %d \n", order_id);
+                printf("\nYour Order ID: %d \n", ++order_id);
                 printf("Your Total Bill: %d BDT\n\n\n", total_price);
                 customerwrite(total_price, cart, z);
-                order_id++;
                 break;
             }
             else {
@@ -316,7 +318,7 @@ void foodorder(int z) {
     }
 }
 
-// Function to display the welcome screen and handle the choice between dine-in and takeaway
+// Welcome screen and ask the choice between dine-in and takeaway
 void welcomescreen() {
     printf("------------------------\n");
     printf("|                      |\n");
@@ -334,12 +336,12 @@ void welcomescreen() {
     system("cls");
 
     if (ordertype == 1) {
-        // Loads table reservation system and food ordering system
+        // Loads table reservation and food order
         table();
         foodorder(1);
     }
     else if (ordertype == 2) {
-        // Loads food ordering system
+        // Loads food order
         foodorder(2);
     }
     else {
