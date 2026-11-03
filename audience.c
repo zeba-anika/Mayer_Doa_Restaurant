@@ -3,6 +3,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#define COLOR_RESET       "\033[0m"
+#define COLOR_DEEP_BLUE   "\033[1;34m"
+#define COLOR_LIGHT_BLUE  "\033[1;36m"
+#define COLOR_BRIGHT_WHITE  "\033[38;2;255;255;255m"
+
 // Function Declarations
 void Update_AS();
 
@@ -20,7 +25,7 @@ int main() {
 // Function to update the diner's screen with the current orders
 void Update_AS() {
     system("cls");
-    printf(" ----- Welcome to Diners Screen ----- \n\n\n");
+    printf(COLOR_BRIGHT_WHITE"-----------------  Welcome to Diners Screen  ----------------\n"COLOR_RESET"\n\n\n");
 
     char line[100];
 
@@ -36,7 +41,7 @@ void Update_AS() {
 
         if (sscanf(line, "%d %d %d %d %d %d %d %d %d %s %d %s", &id, &status, &burger, &pizza, &sandwich, &cookies, &coldDrinks, &price, &date, month, &table_num, tablegula)) {
             if (status == 2) {
-                printf("OrderID %d || Your Food is Ready || For Table: ", id);
+                printf(COLOR_BRIGHT_WHITE"OrderID %d"COLOR_RESET" || Your Food is Ready || For Table: ", id);
                 puts(tablegula);
                 printf("\n");
             }

@@ -4,6 +4,11 @@
 #include <string.h>
 #include <time.h>
 
+#define COLOR_RESET       "\033[0m"
+#define COLOR_DEEP_BLUE   "\033[1;34m"
+#define COLOR_LIGHT_BLUE  "\033[1;36m"
+#define COLOR_BRIGHT_WHITE  "\033[38;2;255;255;255m"
+
 // Global variables for the program
 int tablestatus[10] = {0};
 int order_id = 101;
@@ -91,15 +96,52 @@ void table() {
     }
 
     // Displays which tables are free and which are booked
-    printf("----Table Booking System----\n");
+    printf(COLOR_BRIGHT_WHITE"-----------------  Table Booking System  ----------------\n"COLOR_RESET);
+    
+    int free_table_flag = 0;
     for (int i = 0; i < 10; i++) {
         if (tablestatus[i] == 0) {
-            printf("Table %d is Free. \n", i + 1);
-        }
-        else {
-            printf("Table %d is Booked. \n", i + 1);
+            free_table_flag = 1;
+            break;
         }
     }
+
+
+    printf("\n\n");
+    printf("_________________________________________________________\n\n\n");
+    for (int i = 0; i < 10; i++) {
+        if (tablestatus[i] == 1) {
+            printf(" [  ------  ]   ");
+        }
+        else {        
+            if (i == 9) {
+                printf(COLOR_LIGHT_BLUE" [ Table %d ]   "COLOR_RESET, i + 1);
+            }
+            else {
+                printf(COLOR_LIGHT_BLUE" [ Table 0%d ]   "COLOR_RESET, i + 1);
+            }
+        }
+        
+        
+        if (i == 0 || i == 3 || i == 6) {
+            printf("        ");
+        }
+        
+        if ((i+1)%3 == 0) {
+            printf("\n\n\n\n");
+        }
+    }
+    printf(COLOR_DEEP_BLUE"         [ ----- Payment Desk ----- ]"COLOR_RESET);
+    printf("\n\n");
+    printf("_________________________________________________________\n\n\n");
+    
+
+
+    
+    if (free_table_flag == 0) {
+        printf("\nNo tables are Available. Takeaway at your service.\n");
+    }
+
     printf("\nEnter 0 to exit\n");
     table_counter = 0;
 
@@ -127,7 +169,7 @@ void table() {
     }
 
     system("cls");
-    printf("You have reserved seat no: ");
+    printf("\nYou have reserved seat no: ");
 
     for (int i = 0; i < table_counter; i++) {
         printf("%d ", current_table[i]);
@@ -183,7 +225,7 @@ void customerwrite(int total_price, int cart[], int z) {
 // Function to display the menu and handle food ordering
 void foodorder(int z) {
     int item, count, cart[5] = {0}, total_price = 0;
-    printf("\n <-- Menu -->\n\n");
+    printf("\n" COLOR_BRIGHT_WHITE"---------  Food Menu  ---------"COLOR_RESET"\n\n");
 
     int invalid_food_no = 0, invalid_food_items[5] = {0};
     char line[100] = {0};
@@ -199,7 +241,7 @@ void foodorder(int z) {
 
         if (sscanf(line, "%d %d %s", &food_item_no, &food_status, food_name)) {
             if (food_status) {
-                printf("%d. %s - %d BDT\n", klm_counter + 1, Menu[klm_counter].item_name, Menu[klm_counter].item_price);
+                printf("%d. %s\t-    "COLOR_LIGHT_BLUE"%d BDT"COLOR_RESET"\n", klm_counter + 1, Menu[klm_counter].item_name, Menu[klm_counter].item_price);
                 printf("\n");
             }
             else {
@@ -215,12 +257,12 @@ void foodorder(int z) {
 
     // Allows the user to order food items and handles invalid inputs
     while (1) {
-        printf("Which item do you want?- ");
+        printf("\nWhich item do you want?- ");
         scanf("%d", &item);
         if (item == 0) {
             system("cls");
             printf("Your Order has been placed successfully\n\n");
-            printf("---- Your Receipt ---- \n\n");
+            printf(COLOR_BRIGHT_WHITE"---- Your Receipt ---- \n\n"COLOR_RESET);
             for (int i = 0; i < 5; i++) {
                 if (cart[i] != 0) {
                     total_price += cart[i] * Menu[i].item_price;
@@ -237,7 +279,7 @@ void foodorder(int z) {
             }
 
             if (real_status) {
-                printf("Your Order ID: %d \n", order_id);
+                printf("\nYour Order ID: %d \n", order_id);
                 printf("Your Total Bill: %d BDT\n\n\n", total_price);
                 customerwrite(total_price, cart, z);
                 order_id++;
@@ -278,15 +320,15 @@ void foodorder(int z) {
 void welcomescreen() {
     printf("------------------------\n");
     printf("|                      |\n");
-    printf("| Mayer Doa Restaurant |\n");
+    printf("| "COLOR_BRIGHT_WHITE"Mayer Doa Restaurant"COLOR_RESET" |\n");
     printf("|                      |\n");
     printf("------------------------\n");
-    printf("Would you like to :\n");
-    printf("\t1.Dine in.\n");
-    printf("\t2.Takeaway.\n");
+    printf("\nWould you like to :\n");
+    printf("   1. Dine in.\n");
+    printf("   2. Takeaway.\n");
 
     int ordertype;
-    printf("Enter your option:");
+    printf("\nEnter your option:");
     scanf("%d", &ordertype);
 
     system("cls");

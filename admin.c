@@ -3,6 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#define COLOR_RESET       "\033[0m"
+#define COLOR_DEEP_BLUE   "\033[1;34m"
+#define COLOR_LIGHT_BLUE  "\033[1;36m"
+#define COLOR_BRIGHT_WHITE  "\033[38;2;255;255;255m"
+
 // Function Declarations
 void statusChanger();
 void menu();
@@ -12,6 +17,7 @@ void new_session_seat_releaser();
 void new_session_with_food_restock();
 
 int main() {
+    system("cls");
     // Loads the admin panel and waits for the admin to select an option
     while (1) {
         menu();
@@ -64,7 +70,7 @@ void sales(int x) {
     }
     else {
         system("cls");
-        printf("Total monthly sales: %d BDT \n\n", sum);
+        printf(COLOR_BRIGHT_WHITE"Total sales:"COLOR_RESET" "COLOR_LIGHT_BLUE"%d BDT"COLOR_RESET" \n\n", sum);
     }
 
     fclose(fptr);
@@ -125,7 +131,6 @@ void new_session_with_food_restock() {
     fprintf(fptr, orders);
     fclose(fptr);
 
-    system("cls");
     printf("All food items have been restocked.\n\n");
 }
 
@@ -196,19 +201,19 @@ void new_session_seat_releaser() {
 void menu() {
     printf("------------------------\n");
     printf("|                      |\n");
-    printf("|     Admin Panel      |\n");
+    printf("|     "COLOR_BRIGHT_WHITE"Admin Panel"COLOR_RESET"      |\n");
     printf("|                      |\n");
     printf("------------------------\n");
-    printf("Would you like to :\n");
-    printf("\t1. Change Order Status.\n");
-    printf("\t2. Get montly sales stats.\n");
-    printf("\t3. Get daily sales stats.\n");
-    printf("\t4. Update Food Availability Status.\n");
-    printf("\t5. Start New Session.\n");
-    printf("\t6. Start New Session and Restock all Food Items.\n");
+    printf("\nWould you like to :\n");
+    printf("   1. Change Order Status.\n");
+    printf("   2. Get montly sales stats.\n");
+    printf("   3. Get daily sales stats.\n");
+    printf("   4. Update Food Availability Status.\n");
+    printf("   5. Start New Session.\n");
+    printf("   6. Start New Session and Restock all Food Items.\n");
 
     int optionType;
-    printf("Enter your option:");
+    printf("\nEnter your option:");
     scanf("%d", &optionType);
 
     if (optionType == 1) {
@@ -235,7 +240,7 @@ void menu() {
             if (sscanf(line, "%d %d %s", &food_item_no, &food_status, food_name)) {
                 printf("%d. %s is ", food_item_no, food_name);
                 if (food_status)
-                    printf("available.\n");
+                    printf(COLOR_DEEP_BLUE"available.\n"COLOR_RESET);
                 else
                     printf("not available.\n");
             }
