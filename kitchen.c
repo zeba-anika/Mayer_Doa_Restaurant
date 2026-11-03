@@ -1,6 +1,25 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void Update_KS();
 
 int main() {
+    for (;;) {
+        Update_KS();
+
+        fflush(stdout); 
+        sleep(3); 
+    }
+}
+
+
+void Update_KS() {
+
+    system("cls");
+
+    printf(" ----- Welcome to Chef's Screen ----- \n\n\n");
+
     char line[100];
 
     FILE *fptr;
@@ -22,5 +41,4 @@ int main() {
     }
 
     fclose(fptr);
-    return 0;
 }

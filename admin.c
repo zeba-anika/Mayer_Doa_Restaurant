@@ -1,23 +1,33 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 //Function Declarations
-void seatreleaser();
 void statusChanger();
 void menu();
-void sales();
-int main() {
-    menu();
+void sales(int x);
 
-    return 0;
+
+int main() {
+    while (1) {
+        menu();
+    }
 }
-void sales(){
-    int sum = 0;
+
+
+void sales(int x){
+    int sum = 0, d;
     char line[100];
     char month_name[5];
-    printf("Enter the first 3 characters of Month: ");
-    scanf("%s",month_name);
-
+    
+    printf("Enter the first 3 characters of Month (i.e. Oct): ");
+    scanf("%s", month_name);
+    
+    if (x == 3) {
+        printf("Enter the Day (i.e. 21): ");
+        scanf("%d", &d);
+    }
+    
     FILE *fptr;
     fptr = fopen("foodorder.txt", "r");
 
@@ -27,25 +37,36 @@ void sales(){
         char month[5];
         char tablegula[25];
         
-        if (sscanf(line, "%d %d %d %d %d %d %d %d %d %s %d %s", &id, &status, &burger, &pizza, &sandwich, &cookies, &coldDrinks, &price, &date, month, &table_num, tablegula));
+        if (sscanf(line, "%d %d %d %d %d %d %d %d %d %s %d %s", &id, &status, &burger, &pizza, &sandwich, &cookies, &coldDrinks, &price, &date, month, &table_num, tablegula)) {
 
-        // printf("%d\n", price);
-        if (strcmp(month,month_name) == 0) {
-            sum += price;
+            // printf("%d\n", price);
+
+            if (x == 2) {
+                //For a month
+                if (strcmp(month,month_name) == 0) {
+                    sum += price;
+                }
+            }
+            else if (x == 3) {
+                //For a day
+                if (strcmp(month,month_name) == 0 && date == d) {
+                    sum += price;
+                }
+            }
         }
-        else {
-            printf("No records found for the month.\n");
-            break;
-        }
+        
     }
 
-    printf("Total monthly sales: %d BDT", sum);
-    
+    if (sum == 0) {
+        system("cls");
+        printf("No records found.\n\n");
+    }
+    else {
+        system("cls");
+        printf("Total monthly sales: %d BDT \n\n", sum);
+    }
 }
 
-void seatreleaser() {
-    
-}
 
 void statusChanger() {
     char arr[5];
@@ -61,9 +82,17 @@ void statusChanger() {
         // printf("%s\n", line);
         strcpy(line2, line);
         char *ptr = strtok(line, " ");
-        if (strcmp(arr, ptr) == 0)
-            line2[4]++;
-
+        if (strcmp(arr, ptr) == 0) {
+            if (line2[4] < '3') {
+                system("cls");
+                printf("Status Changed Successfully from %c to %c\n\n\n", line2[4], line2[4] + 1);
+                line2[4]++;
+            }
+            else {
+                system("cls");
+                printf("Unable to change status. Current status is %c\n\n\n", line2[4]);
+            }
+        }
         strcat(orders, line2);
         
         
@@ -77,6 +106,8 @@ void statusChanger() {
 }
 
 void menu() {
+    // system("cls");
+
     printf("------------------------\n");
     printf("|                      |\n");
     printf("|     Admin Panel      |\n");
@@ -85,6 +116,7 @@ void menu() {
     printf("Would you like to :\n");
     printf("\t1. Change Order Status.\n");
     printf("\t2. Get montly sales stats.\n");
+    printf("\t3. Get daily sales stats.\n");
 
     int optionType;
     printf("Enter your option:");
@@ -95,11 +127,12 @@ void menu() {
     if(optionType==1){
         statusChanger();
     }
-    else if(optionType==2){
-        sales();
+    else if(optionType==2 || optionType==3){
+        sales(optionType);
     }
     else {
-        printf("Invalid option\n");
+        system("cls");
+        printf("Invalid option\n\n\n");
         return;
     }
 }

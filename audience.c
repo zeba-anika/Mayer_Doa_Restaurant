@@ -1,6 +1,24 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+
+void Update_AS();
 
 int main() {
+    for (;;) {
+        Update_AS();
+
+        fflush(stdout); 
+        sleep(3); 
+    }
+}
+
+void Update_AS() {
+
+    system("cls");
+
+    printf(" ----- Welcome to Diners Screen ----- \n\n\n");
+
     char line[100];
 
     FILE *fptr;
@@ -22,5 +40,4 @@ int main() {
     }
 
     fclose(fptr);
-    return 0;
 }

@@ -22,22 +22,61 @@ struct MenuType Menu[5] = {{"Burger", 100}, {"Pizza", 80}, {"Sandwich", 60}, {"C
 
 void table();
 void welcomescreen();
-void customerwrite(int total_price, int cart[]);
-void foodorder();
+void customerwrite(int total_price, int cart[], int z);
+void foodorder(int z);
 
 int main() {
     system("cls");
     while (1) {
         welcomescreen();
     }
-
-    return 0;
 }
 
 
 
 void table() {
     int n;
+
+    for (int i = 0; i < 10; i++) {
+        tablestatus[i] = 0;
+    }
+
+    char line[100];
+
+    FILE *fptr;
+    fptr = fopen("foodorder.txt", "r");
+
+    while (fgets(line, 100, fptr)) {
+        int id, status, burger, pizza, sandwich, cookies, coldDrinks, price, date, table_num;
+
+        char month[5];
+        char tablegula[25];
+        
+        if (sscanf(line, "%d %d %d %d %d %d %d %d %d %s %d %s", &id, &status, &burger, &pizza, &sandwich, &cookies, &coldDrinks, &price, &date, month, &table_num, tablegula)) {
+            // puts(tablegula);
+
+            //Returns First Token
+            char *ptr = strtok(tablegula, ",");
+            
+            //Keeps printing further tokens
+            
+            while (ptr != NULL){
+                if ((status == 1 || status == 2) && (atoi(ptr) != 0)) {
+                    tablestatus[atoi(ptr) - 1] = 1;
+                }
+                else if ((status == 3) && (atoi(ptr) != 0)) {
+                    tablestatus[atoi(ptr) - 1] = 0;
+                }
+
+                // printf("Seat no %d status is %d\n", atoi(ptr), tablestatus[atoi(ptr) - 1]);
+                
+                ptr = strtok(NULL, ",");
+            }
+        }
+    }
+
+
+    fclose(fptr);
 
     for (int i = 0; i < 10; i++) {
         current_table[i] = 0;
@@ -91,29 +130,51 @@ void table() {
 }
 
 
-void customerwrite(int total_price, int cart[]) {
+void customerwrite(int total_price, int cart[], int z) {
     FILE *fptr;
     fptr = fopen("foodorder.txt", "a");
     if(fptr==NULL) return;
     
+    int real_status = 0;
+    
+    for (int i = 0; i < 5; i++) {
+        if (cart[i] != 0) {
+            real_status = 1;
+        }
+    }
+
+    if (real_status == 0) {
+        return;
+    }
+
     //Checks current day
     char day_name[10], month_name[10];
     int day_num;
     time_t now = time(NULL);
     sscanf(ctime(&now), "%s %s %d", day_name, month_name, &day_num);
 
+    if (z == 2) {
+        table_counter = 0;
+    }
+
     fprintf(fptr, "%d 1 %d %d %d %d %d %d %d %s %d ", order_id, cart[0], cart[1], cart[2], cart[3], cart[4], total_price, day_num, month_name, table_counter);
 
-    for (int i = 0; i < table_counter; i++) {
-        fprintf(fptr, "%d,", current_table[i]);
+    if (z == 1) {
+        for (int i = 0; i < table_counter; i++) {
+            fprintf(fptr, "%d,", current_table[i]);
+        }
     }
+    else if (z == 2) {
+        fprintf(fptr, "%d,", 0);
+    }
+
     
     fprintf(fptr, "\n");
     fclose(fptr);
 }
 
 
-void foodorder() {
+void foodorder(int z) {
     int item, count, cart[5] = {0}, total_price = 0;
     printf("<-- Menu -->\n");
     
@@ -135,16 +196,32 @@ void foodorder() {
                     printf("You have selected %d %s(s)\n", cart[i], Menu[i].item_name);
                 }
             }
-            printf("Your Order ID: %d \n", ++order_id);
-            printf("Your Total Bill: %d BDT\n\n\n", total_price);
-            customerwrite(total_price, cart);
-            break;
+
+            int real_status = 0;
+    
+            for (int i = 0; i < 5; i++) {
+                if (cart[i] != 0) {
+                    real_status = 1;
+                }
+            }
+
+            if (real_status) {
+                printf("Your Order ID: %d \n", ++order_id);
+                printf("Your Total Bill: %d BDT\n\n\n", total_price);
+                customerwrite(total_price, cart, z);
+                break;
+            }
+            else {
+                printf("You haven't ordered anything!\n");
+                break;
+            }
+
         }
 
         printf("How many %s? - ", Menu[item-1].item_name);
         scanf("%d", &count);
 
-        if (item < 0 || count < 0) {
+        if (item < 0 || item > 5 || count < 0) {
             printf("Your given option is invalid\n");
         }
         else {
@@ -158,8 +235,6 @@ void foodorder() {
     if (zero == 0) {
         system("cls");
     }
-
-
 }
 
 
@@ -181,10 +256,10 @@ void welcomescreen() {
     
     if(ordertype==1){
         table();
-        foodorder();
+        foodorder(1);
     }
     else if(ordertype==2){
-        foodorder();
+        foodorder(2);
     }
     else {
         printf("Invalid option\n");
