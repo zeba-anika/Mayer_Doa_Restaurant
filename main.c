@@ -2,18 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 //Global Declarations
 int tablestatus[10] = {0};
 int order_id = 100;
 int cart[5] = {0};
 int total_price;
-
-struct orderFormat {
-    int status, orderid, tableno, burgerno, pizzano, sandwichno, cookiesno, colddrinksno, price;
-} orderFormat;
-
-struct orderFormat orderlist[10] = {0};
+int table_counter = 0;
+int current_table[10] = {0};
 
 struct MenuType {
     char item_name[100];
@@ -41,7 +38,11 @@ int main() {
 
 void table() {
     int n;
-     printf("----Table Booking System----\n");
+
+    for (int i = 0; i < 10; i++) {
+        current_table[i] = 0;
+    }
+    printf("----Table Booking System----\n");
     for (int i = 0; i < 10; i++){
         if (tablestatus[i]==0) {
             printf("Table %d is Free. \n", i + 1);
@@ -51,16 +52,26 @@ void table() {
         }
     }
     printf("\nEnter 0 to exit\n");
+    table_counter = 0;
     while(1){
         printf("Which table would you like to book?-");
         scanf("%d", &n);
         if(n==0){break;}
+        current_table[table_counter] = n;
+        table_counter++;
 
         tablestatus[n-1] = 1;
         printf("Table no %d has been reserved.\n\n", n);
     }
 
+    
     system("cls");
+    printf("You have reserved seat no: ");
+    
+    for (int i = 0; i < table_counter; i++) {
+        printf("%d ", current_table[i]);
+    }
+    printf("\n");
 }
 
 
@@ -68,8 +79,20 @@ void customerwrite(int total_price, int cart[]) {
     FILE *fptr;
     fptr = fopen("foodorder.txt", "a");
     if(fptr==NULL) return;
-    fprintf(fptr, "%d 1 %d %d %d %d %d %d\n", order_id, cart[0], cart[1], cart[2], cart[3], cart[4], total_price);
+    
+    //Checks current day
+    char day_name[10], month_name[10];
+    int day_num;
+    time_t now = time(NULL);
+    sscanf(ctime(&now), "%s %s %d", day_name, month_name, &day_num);
 
+    fprintf(fptr, "%d 1 %d %d %d %d %d %d %d %s %d ", order_id, cart[0], cart[1], cart[2], cart[3], cart[4], total_price, day_num, month_name, table_counter);
+
+    for (int i = 0; i < table_counter; i++) {
+        fprintf(fptr, "%d,", current_table[i]);
+    }
+    
+    fprintf(fptr, "\n");
     fclose(fptr);
 }
 

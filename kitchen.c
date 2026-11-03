@@ -7,10 +7,20 @@ int main() {
     fptr = fopen("foodorder.txt", "r");
 
     while (fgets(line, 100, fptr)) {
-        if (line[4] == '1') {
-            printf("%c%c%c: %c Burgers, %c Pizzas, %c Sandwiches, %c Cookies, %c ColdDrinks\n", line[0], line[1], line[2],  line[6], line[8], line[10], line[12], line[14]);
+        int id, status, burger, pizza, sandwich, cookies, coldDrinks, price, date, table_num;
+
+        char month[5];
+        char tablegula[25];
+        
+        if (sscanf(line, "%d %d %d %d %d %d %d %d %d %s %d %s", &id, &status, &burger, &pizza, &sandwich, &cookies, &coldDrinks, &price, &date, month, &table_num, tablegula)) {
+            if (status == 1) {
+                printf("OrderID %d || %d Burgers, %d Pizzas, %d Sandwiches, %d Cookies, %d ColdDrinks || For Table: ", id, status, burger, pizza, sandwich ,cookies, coldDrinks);
+                puts(tablegula);
+                printf("\n");
+            }
         }
     }
 
     fclose(fptr);
+    return 0;
 }
