@@ -25,17 +25,44 @@ void welcomescreen();
 void customerwrite(int total_price, int cart[]);
 void foodorder();
 
+
+//The main function
 int main() {
-    system("cls");
-    while (1) {
-        welcomescreen();
+    int role_choice;
+
+    printf("====================================================\n");
+    printf("       MAYER DOA RESTAURANT MANAGEMENT SYSTEM       \n");
+    printf("====================================================\n\n");
+    printf("Select your role to access your portal:\n\n");
+    printf("  1. Customer Portal\n");
+    printf("  2. Kitchen Portal\n");
+    printf("  3. Audience Portal\n");
+    printf("  4. Admin Portal\n");
+    printf("  0. Exit System\n\n");
+    printf("----------------------------------------------------\n");
+    printf("Enter your choice (0-4): ");
+    
+    scanf("%d", &role_choice);
+
+    switch (role_choice) {
+        case 1:
+            // Customer program launch korbe
+            
+            break;
+
+        
+        default:
+            printf("\nInvalid choice! Please choose between 0-4.\n");
+            break;
     }
+    
 
     return 0;
 }
 
 
 
+//Function Declarations
 void table() {
     int n;
 
@@ -57,11 +84,21 @@ void table() {
         printf("Which table would you like to book?-");
         scanf("%d", &n);
         if(n==0){break;}
-        current_table[table_counter] = n;
-        table_counter++;
 
-        tablestatus[n-1] = 1;
-        printf("Table no %d has been reserved.\n\n", n);
+        for (int i = 0; i < 10; i++) {
+            if (tablestatus[n-1] == 1) {
+                printf("This table is already reserved. Try another one.\n");
+                break;
+            }
+        }
+
+        
+        if (tablestatus[n-1] == 0) {
+            current_table[table_counter] = n;
+            table_counter++;
+            tablestatus[n-1] = 1;
+            printf("Table no %d has been reserved.\n\n", n);
+        }
     }
 
     

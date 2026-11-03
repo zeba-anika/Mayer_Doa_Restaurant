@@ -2,6 +2,7 @@
 #include <string.h>
 
 //Function Declarations
+void seatreleaser();
 void statusChanger();
 void menu();
 void sales();
@@ -39,6 +40,10 @@ void sales(){
     }
 
     printf("Total monthly sales: %d BDT", sum);
+    
+}
+
+void seatreleaser() {
     
 }
 
