@@ -5,6 +5,15 @@
 
 //Global Declarations
 int tablestatus[10] = {0};
+int order_id = 100;
+int cart[5] = {0};
+int total_price;
+
+struct orderFormat {
+    int status, orderid, tableno, burgerno, pizzano, sandwichno, cookiesno, colddrinksno, price;
+} orderFormat;
+
+struct orderFormat orderlist[10] = {0};
 
 struct MenuType {
     char item_name[100];
@@ -16,6 +25,7 @@ struct MenuType Menu[5] = {{"Burger", 100}, {"Pizza", 80}, {"Sandwich", 60}, {"C
 
 void table();
 void welcomescreen();
+void customerwrite(int total_price, int cart[]);
 void foodorder();
 
 int main() {
@@ -54,6 +64,16 @@ void table() {
 }
 
 
+void customerwrite(int total_price, int cart[]) {
+    FILE *fptr;
+    fptr = fopen("foodorder.txt", "a");
+    if(fptr==NULL) return;
+    fprintf(fptr, "%d 1 %d %d %d %d %d %d\n", order_id, cart[0], cart[1], cart[2], cart[3], cart[4], total_price);
+
+    fclose(fptr);
+}
+
+
 void foodorder() {
     int item, count, cart[5] = {0}, total_price = 0;
     printf("<-- Menu -->\n");
@@ -76,7 +96,9 @@ void foodorder() {
                     printf("You have selected %d %s(s)\n", cart[i], Menu[i].item_name);
                 }
             }
+            printf("Your Order ID: %d \n", ++order_id);
             printf("Your Total Bill: %d BDT\n\n\n", total_price);
+            customerwrite(total_price, cart);
             break;
         }
 
@@ -111,7 +133,7 @@ void welcomescreen() {
     printf("Would you like to :\n");
     printf("\t1.Dine in.\n");
     printf("\t2.Takeaway.\n");
-    
+
     int ordertype;
     printf("Enter your option:");
     scanf("%d", &ordertype);
