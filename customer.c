@@ -6,7 +6,7 @@
 
 //Global Declarations
 int tablestatus[10] = {0};
-int order_id = 100;
+int order_id = 101;
 int cart[5] = {0};
 int total_price;
 int table_counter = 0;
@@ -27,6 +27,19 @@ void foodorder(int z);
 
 int main() {
     system("cls");
+    char line[100] = {0};
+
+    FILE *fptr;
+    fptr = fopen("foodorder.txt", "r");
+
+    while (fgets(line, 100, fptr)) {
+        sscanf(line, "%d", &order_id);
+    }
+    if (order_id != 101)
+        order_id++;
+
+    fclose(fptr);
+
     while (1) {
         welcomescreen();
     }
@@ -228,9 +241,10 @@ void foodorder(int z) {
             }
 
             if (real_status) {
-                printf("Your Order ID: %d \n", ++order_id);
+                printf("Your Order ID: %d \n", order_id);
                 printf("Your Total Bill: %d BDT\n\n\n", total_price);
                 customerwrite(total_price, cart, z);
+                order_id++;
                 break;
             }
             else {
