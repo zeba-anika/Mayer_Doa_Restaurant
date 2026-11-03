@@ -1,8 +1,9 @@
+// Imports libraries for the program
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-//Function Declarations
+// Function Declarations
 void statusChanger();
 void menu();
 void sales(int x);
@@ -10,27 +11,28 @@ void FoodStatus(int y);
 void new_session_seat_releaser();
 void new_session_with_food_restock();
 
-
 int main() {
+    // Loads the admin panel and waits for the admin to select an option
     while (1) {
         menu();
     }
 }
 
-
-void sales(int x){
+// Function to calculate the total sales for a given month or day
+void sales(int x) {
     int sum = 0, d;
     char line[100];
     char month_name[5];
-    
+
     printf("Enter the first 3 characters of Month (i.e. Oct): ");
     scanf("%s", month_name);
-    
+
     if (x == 3) {
         printf("Enter the Day (i.e. 21): ");
         scanf("%d", &d);
     }
-    
+
+    // Reads the current orders from the DB File
     FILE *fptr;
     fptr = fopen("foodorder.txt", "r");
 
@@ -39,25 +41,21 @@ void sales(int x){
 
         char month[5];
         char tablegula[25];
-        
+
         if (sscanf(line, "%d %d %d %d %d %d %d %d %d %s %d %s", &id, &status, &burger, &pizza, &sandwich, &cookies, &coldDrinks, &price, &date, month, &table_num, tablegula)) {
-
-            // printf("%d\n", price);
-
             if (x == 2) {
-                //For a month
-                if (strcmp(month,month_name) == 0) {
+                // For a month
+                if (strcmp(month, month_name) == 0) {
                     sum += price;
                 }
             }
             else if (x == 3) {
-                //For a day
-                if (strcmp(month,month_name) == 0 && date == d) {
+                // For a day
+                if (strcmp(month, month_name) == 0 && date == d) {
                     sum += price;
                 }
             }
         }
-        
     }
 
     if (sum == 0) {
@@ -68,63 +66,70 @@ void sales(int x){
         system("cls");
         printf("Total monthly sales: %d BDT \n\n", sum);
     }
+
+    fclose(fptr);
 }
 
+// Function to update the availability status of a food item
 void FoodStatus(int y) {
     char line[100] = {0};
     char line2[100] = {0};
     char orders[1000] = {0};
-    
+
+    // Reads the current food stock from the DB File
     FILE *fptr;
     fptr = fopen("foodstock.txt", "r");
 
     while (fgets(line, 100, fptr)) {
         strcpy(line2, line);
-        
+
         int food_item_no, food_status;
         char food_name[20];
-        
+
+        // Changes the availability status of the selected food item
         if (sscanf(line, "%d %d %s", &food_item_no, &food_status, food_name)) {
-            if(y == food_item_no) {
-                if (food_status == 1) line2[2] = '0';
-                else if (food_status == 0) line2[2] = '1';
+            if (y == food_item_no) {
+                if (food_status == 1)
+                    line2[2] = '0';
+                else if (food_status == 0)
+                    line2[2] = '1';
             }
-        
+
             strcat(orders, line2);
         }
     }
 
     fclose(fptr);
-    
+
     fptr = fopen("foodstock.txt", "w");
     fprintf(fptr, orders);
-    
     fclose(fptr);
 }
 
-
+// Function to start a new session and restock all food items
 void new_session_with_food_restock() {
     char line[100] = {0};
     char orders[1000] = {0};
-    
+
+    // Reads the current food stock from the DB File and restocks all food items
     FILE *fptr;
     fptr = fopen("foodstock.txt", "r");
-    while (fgets(line, 100, fptr)) {       
+    while (fgets(line, 100, fptr)) {
         line[2] = '1';
         strcat(orders, line);
     }
 
     fclose(fptr);
-    
+
     fptr = fopen("foodstock.txt", "w");
     fprintf(fptr, orders);
     fclose(fptr);
 
+    system("cls");
     printf("All food items have been restocked.\n\n");
 }
 
-
-
+// Function to change the status of an order
 void statusChanger() {
     char arr[5];
     printf("Enter the OrderID ? ");
@@ -133,12 +138,14 @@ void statusChanger() {
     char line[100] = {0};
     char line2[100] = {0};
 
+    // Reads the current orders from the DB File
     FILE *fptr;
     fptr = fopen("foodorder.txt", "r");
     while (fgets(line, 100, fptr)) {
-        // printf("%s\n", line);
         strcpy(line2, line);
         char *ptr = strtok(line, " ");
+        
+        // Changes the status of the selected order
         if (strcmp(arr, ptr) == 0) {
             if (line2[4] < '3') {
                 system("cls");
@@ -151,31 +158,32 @@ void statusChanger() {
             }
         }
         strcat(orders, line2);
-        
-        
-    }    
+    }
+
     fclose(fptr);
-    
+
     fptr = fopen("foodorder.txt", "w");
-    
     fprintf(fptr, "%s", orders);
     fclose(fptr);
 }
 
+// Function to start a new session and release all tables
 void new_session_seat_releaser() {
     char orders[1000] = {0};
     char line[100] = {0};
     char line2[100] = {0};
 
+    // Reads the current orders from the DB File and forecefully completes all orders to start a new session
     FILE *fptr;
     fptr = fopen("foodorder.txt", "r");
     while (fgets(line, 100, fptr)) {
         strcpy(line2, line);
         line2[4] = '3';
         strcat(orders, line2);
-    }    
+    }
+
     fclose(fptr);
-    
+
     fptr = fopen("foodorder.txt", "w");
     fprintf(fptr, "%s", orders);
     fclose(fptr);
@@ -184,9 +192,8 @@ void new_session_seat_releaser() {
     printf("New session has been started.\nAll tables have been released.\n");
 }
 
+// Function to display the admin panel menu and handle user input
 void menu() {
-    // system("cls");
-
     printf("------------------------\n");
     printf("|                      |\n");
     printf("|     Admin Panel      |\n");
@@ -203,27 +210,28 @@ void menu() {
     int optionType;
     printf("Enter your option:");
     scanf("%d", &optionType);
-    
-    // system("cls");
-    
-    if(optionType==1){
+
+    if (optionType == 1) {
+        // Loads the status changer function to change the status of an order
         statusChanger();
     }
-    else if(optionType==2 || optionType==3){
+    else if (optionType == 2 || optionType == 3) {
+        // Loads the sales function to calculate the total sales for a given month or day
         sales(optionType);
     }
-    else if(optionType==4){
+    else if (optionType == 4) {
         system("cls");
         int y;
         char line[100] = {0};
-        
+
+        // Reads the current food stock from the DB File and displays the availability status of each food item
         FILE *fptr;
         fptr = fopen("foodstock.txt", "r");
 
         while (fgets(line, 100, fptr)) {
             int food_item_no, food_status;
             char food_name[20];
-            
+
             if (sscanf(line, "%d %d %s", &food_item_no, &food_status, food_name)) {
                 printf("%d. %s is ", food_item_no, food_name);
                 if (food_status)
@@ -233,13 +241,11 @@ void menu() {
             }
             printf("\n");
         }
-        
 
         fclose(fptr);
-
-        
-        
         printf("Enter 0 to exit\n");
+
+        // Changes the availability status of the selected food item
         printf("Which item's availability would you like to change? (0-5): \n\n");
         scanf("%d", &y);
 
@@ -248,7 +254,7 @@ void menu() {
             system("cls");
             printf("Status changed Successfully\n\n");
         }
-        else if(y == 0) {
+        else if (y == 0) {
             system("cls");
             return;
         }
@@ -258,12 +264,14 @@ void menu() {
             return;
         }
     }
-    else if(optionType==5){
+    else if (optionType == 5) {
+        // Starts a new session and releases all tables
         system("cls");
         new_session_seat_releaser();
         return;
     }
-    else if(optionType==6){
+    else if (optionType == 6) {
+        // Starts a new session, releases all tables and restocks all food items
         system("cls");
         new_session_seat_releaser();
         new_session_with_food_restock();
